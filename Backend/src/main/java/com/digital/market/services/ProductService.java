@@ -1,22 +1,22 @@
 package com.digital.market.services;
 
-
-
 import java.util.List;
-import java.util.UUID;
 
 import com.digital.market.dto.ProductDto;
-import com.digital.market.entities.Product;
+import com.digital.market.dto.ProductResponse;
+
 
 
 public interface ProductService {
 
-    public Product addProduct(ProductDto product);
-    public List<ProductDto> getAllProducts(UUID categoryId, UUID typeId);
+	public Boolean saveProduct(ProductDto productDto);
 
-    ProductDto getProductBySlug(String slug);
+	public List<ProductDto> getAllProducts();
 
-    ProductDto getProductById(UUID id);
+	public ProductDto getProductById(Integer id);
 
-    Product updateProduct(ProductDto productDto);
+	public Boolean deleteProduct(Integer id);
+
+	public ProductResponse getProductsWithPagination(int pageNo, int pageSize, String sortBy, String sortDir);
+
 }

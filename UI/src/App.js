@@ -1,27 +1,21 @@
+import { Route,Routes } from 'react-router-dom';
 import './App.css';
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import Navbar from './layout/Navbar';
-import Home from './pages/Home';
-import { BrowserRouter as Router,Routes,Route } from 'react-router-dom';
-import AddUser from './users/AddUser';
-import EditUser from './users/EditUser';
-import ViewUser from './users/ViewUser';
+import Navbar from './component/Navbar'; 
+import Home from './component/Home.jsx';
+import AddProduct from './component/AddProduct.jsx';
+import EditProduct from './component/EditProduct.jsx';
 
 function App() {
   return (
-    <div className="App">
-      
-      <Router>
-      <Navbar/>
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/adduser" element={<AddUser />} />
-          <Route exact path="/edituser/:id" element={<EditUser />}/>
-          <Route exact path="/viewuser/:id" element={<ViewUser />} />
-        </Routes>
-      </Router>
+    <>
+    <Navbar/>
 
-    </div>
+    <Routes>
+      <Route path='/' element={<Home/>}></Route>
+      <Route path='/addProduct' element={<AddProduct/>}></Route>
+<Route path='/editProduct' element={<EditProduct/>}></Route>
+    </Routes>
+    </>
   );
 }
 

@@ -1,72 +1,117 @@
 package com.digital.market.controllers;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.digital.market.dto.ProductDto;
-import com.digital.market.entities.Product;
+import com.digital.market.dto.ProductResponse;
 import com.digital.market.services.ProductService;
 
+
+
+
+@CrossOrigin("http://localhost:3000")
 @RestController
-@RequestMapping("/api/products")
-@CrossOrigin
 public class ProductController {
 
-    private ProductService productService;
+	@Autowired
+	private ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService){
-        this.productService = productService;
-    }
+	@PostMapping("/save-product")
+	public ResponseEntity<?> saveProduct(@RequestBody ProductDto productDto) {
 
-    @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false,name = "categoryId",value = "categoryId") UUID categoryId,@RequestParam(required = false,name = "typeId",value = "typeId") UUID typeId,@RequestParam(required = false) String slug ){
-        List<ProductDto> productList = new ArrayList<>();
-        if(StringUtils.isNotBlank(slug)){
-            ProductDto productDto = productService.getProductBySlug(slug);
-            productList.add(productDto);
-        }
-        else {
-            productList = productService.getAllProducts(categoryId, typeId);
-        }
-        return new ResponseEntity<>(productList, HttpStatus.OK);
-    }
+		try {
+			Boolean saveProduct = productService.saveProduct(productDto);
+			if (!saveProduct) {
+				return new ResponseEntity<>("product not saved", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>("saved success", HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/health")
+	public String testHealth() {
+		return "I am Healthy";
+	}
+	
+	@GetMapping("/products")
+	public ResponseEntity<?> getProducts() {
+		List<ProductDto> allProducts = null;
+		try {
+			allProducts = productService.getAllProducts();
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable UUID id){
-        ProductDto productDto = productService.getProductById(id);
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
-    }
+			if (CollectionUtils.isEmpty(allProducts)) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(allProducts, HttpStatus.OK);
+	}
 
-    //   create Product
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productDto){
-        Product product = productService.addProduct(productDto);
-        return new ResponseEntity<>(product,HttpStatus.CREATED);
-    }
+	@GetMapping("/product/{id}")
+	public ResponseEntity<?> getProducts(@PathVariable(name = "id") Integer id) {
+		ProductDto product = null;
+		try {
+			product = productService.getProductById(id);
 
-    @PutMapping
-    public ResponseEntity<Product> updateProduct(@RequestBody ProductDto productDto){
-        Product product = productService.updateProduct(productDto);
-        return new ResponseEntity<>(product,HttpStatus.OK);
-    }
+			if (ObjectUtils.isEmpty(product)) {
+				return new ResponseEntity<>("Product not found with id=" + id, HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(product, HttpStatus.OK);
+	}
 
+	@DeleteMapping("/product/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable(name = "id") Integer id) {
+		Boolean deleteProduct = null;
+		try {
+			deleteProduct = productService.deleteProduct(id);
+
+			if (!deleteProduct) {
+				return new ResponseEntity<>("Product not Deleted", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>("Delete success", HttpStatus.OK);
+	}
+
+	@GetMapping("/page-products")
+	public ResponseEntity<?> getProductsPaginate(@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "2") int pageSize,
+			@RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+			@RequestParam(name = "sortDir", defaultValue = "asc") String sortDir) {
+		ProductResponse productResponse = null;
+//		String name = null;
+//		name.toUpperCase();
+		try {
+
+			productResponse = productService.getProductsWithPagination(pageNo, pageSize, sortBy, sortDir);
+			if (ObjectUtils.isEmpty(productResponse)) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(productResponse, HttpStatus.OK);
+	}
 
 }
