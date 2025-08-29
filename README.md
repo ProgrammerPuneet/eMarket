@@ -17,7 +17,7 @@ The application provides basic shopping functionality such as product listing, c
    - Run the Spring Boot application (`mvn spring-boot:run` or start via IDE).
 
 3. **Start Frontend**
-   - Navigate to the frontend folder.
+   - Navigate to the UI folder.
    - Run the React application (`npm start`).
 
 4. **Access Application**
