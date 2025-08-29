@@ -1,13 +1,24 @@
-Fullstack E-Commerce Project (In Progress)
+# FullStack E-commerce App
 
-Added Backend Part
+A full stack E-commerce web application built using **React**, **Spring Boot**, and **MySQL**.
 
-1)Product Management
+The application provides basic shopping functionality such as product listing, cart management, order placement, and user management.
 
-<img width="400" height="240" alt="image" src="https://github.com/user-attachments/assets/d780ac47-53c8-430a-a6bd-d179c81dfcfe" />
+---
 
-2)Order Management
+## Steps to run the application
 
-3)Cart Management
+1. **Configure Database**
+   - Open the `application.properties` file in the backend folder.
+   - Add your MySQL server details (URL, username, password).
 
-4)Category Management
+2. **Start Backend**
+   - Navigate to the backend folder.
+   - Run the Spring Boot application (`mvn spring-boot:run` or start via IDE).
+
+3. **Start Frontend**
+   - Navigate to the frontend folder.
+   - Run the React application (`npm start`).
+
+4. **Access Application**
+   - Open the link: [http://localhost:3000/](http://localhost:3000/) in your browser.
